@@ -2,7 +2,9 @@
 using FI.AtividadeEntrevista.DML;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Web.Mvc;
+using WebAtividadeEntrevista.Models;
 
 namespace WebAtividadeEntrevista.Controllers
 {
@@ -24,14 +26,43 @@ namespace WebAtividadeEntrevista.Controllers
                 if (array.Length > 1)
                     crescente = array[1];
 
-                List<Beneficiarios> clientes = new BoBeneficiarios().Pesquisa(jtStartIndex, jtPageSize, campo, crescente.Equals("ASC", StringComparison.InvariantCultureIgnoreCase), out qtd);
+                List<Beneficiarios> beneficiarios = new BoBeneficiarios().Pesquisa(jtStartIndex, jtPageSize, campo, crescente.Equals("ASC", StringComparison.InvariantCultureIgnoreCase), out qtd);
 
-                //Return result to jTable
-                return Json(new { Result = "OK", Records = clientes, TotalRecordCount = qtd });
+                return Json(new { Result = "OK", Records = beneficiarios, TotalRecordCount = qtd });
             }
             catch (Exception ex)
             {
                 return Json(new { Result = "ERROR", Message = ex.Message });
+            }
+        }
+
+        [HttpPost]
+        public JsonResult IncluirBeneficiario(BeneficiariosModel model)
+        {
+            BoBeneficiarios bo = new BoBeneficiarios();
+
+            if (!this.ModelState.IsValid)
+            {
+                List<string> erros = (from item in ModelState.Values
+                                      from error in item.Errors
+                                      select error.ErrorMessage).ToList();
+
+                Response.StatusCode = 400;
+                return Json(string.Join(Environment.NewLine, erros));
+            }
+            else
+            {
+                model.Id = bo.Incluir(new Beneficiarios()
+                {
+                    Nome = model.Nome,
+                    CPF = model.CPF,
+                    IdCliente = model.IdCliente
+                });
+
+                if (model.Id == -1)
+                    return Json("CPF já cadastrado na base");
+
+                return Json("Cadastro efetuado com sucesso");
             }
         }
     }

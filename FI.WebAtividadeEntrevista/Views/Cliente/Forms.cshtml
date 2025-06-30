@@ -1,4 +1,8 @@
-﻿<form id="formCadastro" method="post">
+﻿@model WebAtividadeEntrevista.Models.ClienteModel
+
+@Html.HiddenFor(x => x.Id)
+
+<form id="formCadastro" method="post">
     <div class="row">
         <div class="col-md-6">
             <div class="form-group">
@@ -86,12 +90,12 @@
     <div class="row">
         <div class="col-md-6">
             <div class="pull-left">
-                <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#modalBeneficiarios">
+                <button type="button"
+                        class="btn btn-primary"
+                        onclick="abrirModalBeneficiarios($('#Id').val())"
+                        @(Model?.Id == 0 ? "disabled" : "")>
                     Beneficiários
                 </button>
-
-                @Html.Partial("_ModalBeneficiarios")
-
             </div>
         </div>
 
@@ -103,3 +107,6 @@
         </div>
     </div>
 </form>
+
+
+@Html.Partial("~/Views/Beneficiarios/_ModalBeneficiarios.cshtml")
