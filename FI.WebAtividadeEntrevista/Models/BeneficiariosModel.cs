@@ -1,7 +1,7 @@
 ﻿using FI.WebAtividadeEntrevista.Attributes;
 using System.ComponentModel.DataAnnotations;
 
-namespace FI.WebAtividadeEntrevista.Models
+namespace WebAtividadeEntrevista.Models
 {
     public class BeneficiariosModel
     {
