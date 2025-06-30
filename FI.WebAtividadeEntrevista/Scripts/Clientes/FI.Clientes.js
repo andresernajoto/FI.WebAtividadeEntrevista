@@ -1,6 +1,8 @@
 ﻿
 $(document).ready(function () {
     $('#CPF').mask('000.000.000-00');
+    $('#CEP').mask('0000-000');
+    $('#Telefone').mask('(00) 00000-0000');
 
     $('#formCadastro').submit(function (e) {
         e.preventDefault();
@@ -16,8 +18,8 @@ $(document).ready(function () {
                 "Estado": $(this).find("#Estado").val(),
                 "Cidade": $(this).find("#Cidade").val(),
                 "Logradouro": $(this).find("#Logradouro").val(),
-                "Telefone": $(this).find("#Telefone").val(),
-                "CPF": form.find("#CPF").cleanVal()
+                "Telefone": $(this).find("#Telefone").cleanVal(),
+                "CPF": $(this).find("#CPF").cleanVal()
             },
             error:
             function (r) {
