@@ -21,7 +21,7 @@ $(document).ready(function () {
 
     $('#formCadastro').submit(function (e) {
         e.preventDefault();
-        
+
         $.ajax({
             url: urlPost,
             method: "POST",
@@ -38,21 +38,21 @@ $(document).ready(function () {
                 "CPF": $(this).find("#CPF").cleanVal()
             },
             error:
-            function (r) {
-                if (r.status == 400)
-                    ModalDialog("Ocorreu um erro", r.responseJSON);
-                else if (r.status == 500)
-                    ModalDialog("Ocorreu um erro", "Ocorreu um erro interno no servidor.");
-            },
+                function (r) {
+                    if (r.status == 400)
+                        ModalDialog("Ocorreu um erro", r.responseJSON);
+                    else if (r.status == 500)
+                        ModalDialog("Ocorreu um erro", "Ocorreu um erro interno no servidor.");
+                },
             success:
-            function (r) {
-                ModalDialog("Sucesso!", r)
-                $("#formCadastro")[0].reset();                                
-                window.location.href = urlRetorno;
-            }
+                function (r) {
+                    ModalDialog("Sucesso!", r)
+                    $("#formCadastro")[0].reset();
+                    window.location.href = urlRetorno;
+                }
         });
     })
-    
+
 })
 
 function ModalDialog(titulo, texto) {
@@ -79,7 +79,51 @@ function ModalDialog(titulo, texto) {
     $('#' + random).modal('show');
 }
 
+function listarBeneficiarios(idCliente) {
+    $.ajax({
+        url: urlBeneficiariosList,
+        method: 'POST',
+        data: {
+            jtStartIndex: 0,
+            jtPageSize: 999,
+            jtSorting: 'NOME ASC'
+        },
+        success: function (data) {
+            if (data.Result === "OK") {
+                var tabela = $('#tabelaBeneficiarios tbody');
+                tabela.empty(); // Limpa tabela
+
+                data.Records.forEach(function (item) {
+                    if (item.IdCliente === parseInt(idCliente)) {
+                        var linha = `
+                            <tr>
+                                <td style="width: 30%;">${formatarCpf(item.CPF)}</td>
+                                <td style="width: 40%;">${item.Nome}</td>
+                                <td style="width: 30%;">
+                                    <button class="btn btn-primary btn-md" onclick="editarBeneficiario(${item.ID})">Alterar</button>
+                                    <button class="btn btn-primary btn-md" onclick="excluirBeneficiario(${item.ID})">Excluir</button>
+                                </td>
+                            </tr>
+                        `;
+                        tabela.append(linha);
+                    }
+                });
+            } else {
+                alert(data.Message);
+            }
+        },
+        error: function () {
+            alert("Erro ao carregar beneficiários.");
+        }
+    });
+}
+
 function abrirModalBeneficiarios(idCliente) {
     $('#IdCliente').val(idCliente);
+    listarBeneficiarios(idCliente);
     $('#modalBeneficiarios').modal('show');
+}
+
+function formatarCpf(cpf) {
+    return cpf.replace(/^(\d{3})(\d{3})(\d{3})(\d{2})$/, "$1.$2.$3-$4");
 }
