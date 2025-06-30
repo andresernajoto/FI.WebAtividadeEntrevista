@@ -1,61 +1,46 @@
-﻿
-$(document).ready(function () {
-    $('#CPF').prop('readonly', true);
-    $('#CEP').mask('0000-000');
-
-    if (obj) {
-        $('#formCadastro #Nome').val(obj.Nome);
-        $('#formCadastro #CEP').val(obj.CEP);
-        $('#formCadastro #Email').val(obj.Email);
-        $('#formCadastro #Sobrenome').val(obj.Sobrenome);
-        $('#formCadastro #Nacionalidade').val(obj.Nacionalidade);
-        $('#formCadastro #Estado').val(obj.Estado);
-        $('#formCadastro #Cidade').val(obj.Cidade);
-        $('#formCadastro #Logradouro').val(obj.Logradouro);
-        $('#formCadastro #Telefone').val(obj.Telefone);
-        $('#formCadastro #CPF').val(obj.CPF);
-    }
-
-    $('#Telefone').mask('(00) 00000-0000');
-    $('#CPF').mask('000.000.000-00');
-
-    $('#formCadastro').submit(function (e) {
+﻿$(document).ready(function () {
+    $('#CPFBeneficiario').mask('000.000.000-00');
+    
+    $(document).on('submit', '#formBeneficiario', function (e) {
         e.preventDefault();
-        
+
+        const nome = $('#NomeBeneficiario').val().trim();
+        const cpf = $('#CPFBeneficiario').val().trim();
+        const idCliente = $('#IdCliente').val();
+
+        if (!idCliente) {
+            BeneficiarioModal("Erro", "Cliente ainda não cadastrado. Salve o cliente antes de incluir beneficiários.");
+            return;
+        }
+
+        if (!nome || !cpf) {
+            BeneficiarioModal("Atenção", "Preencha todos os campos de beneficiário antes de incluir.");
+            return;
+        }
+
         $.ajax({
-            url: urlPost,
+            url: urlBeneficiarioPost,
             method: "POST",
             data: {
-                "NOME": $(this).find("#Nome").val(),
-                "CEP": $(this).find("#CEP").val(),
-                "Email": $(this).find("#Email").val(),
-                "Sobrenome": $(this).find("#Sobrenome").val(),
-                "Nacionalidade": $(this).find("#Nacionalidade").val(),
-                "Estado": $(this).find("#Estado").val(),
-                "Cidade": $(this).find("#Cidade").val(),
-                "Logradouro": $(this).find("#Logradouro").val(),
-                "Telefone": $(this).find("#Telefone").cleanVal(),
-                "CPF": $(this).find("#CPF").cleanVal()
+                "NOME": nome,
+                "CPF": $('#CPFBeneficiario').cleanVal(),
+                "IDCLIENTE": idCliente
             },
-            error:
-            function (r) {
-                if (r.status == 400)
-                    ModalDialog("Ocorreu um erro", r.responseJSON);
-                else if (r.status == 500)
-                    ModalDialog("Ocorreu um erro", "Ocorreu um erro interno no servidor.");
+            success: function (r) {
+                BeneficiarioModal("Sucesso!", r)
+                $("#formBeneficiario")[0].reset();
             },
-            success:
-            function (r) {
-                ModalDialog("Sucesso!", r)
-                $("#formCadastro")[0].reset();                                
-                window.location.href = urlRetorno;
+            error: function (r) {
+                if (r.status === 400)
+                    BeneficiarioModal("Erro", r.responseJSON);
+                else
+                    BeneficiarioModal("Erro", "Erro interno no servidor.");
             }
         });
-    })
-    
+    });    
 })
 
-function ModalDialog(titulo, texto) {
+function BeneficiarioModal(titulo, texto) {
     var random = Math.random().toString().replace('.', '');
     var texto = '<div id="' + random + '" class="modal fade">                                                               ' +
         '        <div class="modal-dialog">                                                                                 ' +
@@ -77,9 +62,4 @@ function ModalDialog(titulo, texto) {
 
     $('body').append(texto);
     $('#' + random).modal('show');
-}
-
-function abrirModalBeneficiarios(idCliente) {
-    $('#IdCliente').val(idCliente);
-    $('#modalBeneficiarios').modal('show');
 }

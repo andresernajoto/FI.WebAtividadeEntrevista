@@ -11,6 +11,7 @@
     <script type="text/javascript" src="~/Scripts/jquery.mask.js"></script>
 
     @Scripts.Render("~/bundles/altClientes")
+    @Scripts.Render("~/bundles/beneficiarios")
 }
 <h2>@Html.Raw(ViewBag.Title)</h2>
-@Html.Partial("Forms")
+@Html.Partial("Forms", Model)

@@ -2,7 +2,9 @@
 using FI.AtividadeEntrevista.DML;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Web.Mvc;
+using WebAtividadeEntrevista.Models;
 
 namespace WebAtividadeEntrevista.Controllers
 {
@@ -32,6 +34,33 @@ namespace WebAtividadeEntrevista.Controllers
             catch (Exception ex)
             {
                 return Json(new { Result = "ERROR", Message = ex.Message });
+            }
+        }
+
+        [HttpPost]
+        public JsonResult IncluirBeneficiario(BeneficiariosModel model)
+        {
+            BoBeneficiarios bo = new BoBeneficiarios();
+
+            if (!this.ModelState.IsValid)
+            {
+                List<string> erros = (from item in ModelState.Values
+                                      from error in item.Errors
+                                      select error.ErrorMessage).ToList();
+
+                Response.StatusCode = 400;
+                return Json(string.Join(Environment.NewLine, erros));
+            }
+            else
+            {
+                model.Id = bo.Incluir(new Beneficiarios()
+                {
+                    Nome = model.Nome,
+                    CPF = model.CPF,
+                    IdCliente = model.IdCliente
+                });
+
+                return Json("Cadastro efetuado com sucesso");
             }
         }
     }
