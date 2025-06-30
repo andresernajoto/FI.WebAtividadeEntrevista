@@ -59,6 +59,9 @@ namespace WebAtividadeEntrevista.Controllers
                     IdCliente = model.IdCliente
                 });
 
+                if (model.Id == -1)
+                    return Json("CPF já cadastrado na base");
+
                 return Json("Cadastro efetuado com sucesso");
             }
         }

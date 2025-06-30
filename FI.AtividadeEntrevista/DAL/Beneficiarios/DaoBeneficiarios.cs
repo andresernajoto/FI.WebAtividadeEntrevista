@@ -14,6 +14,11 @@ namespace FI.AtividadeEntrevista.DAL.Beneficiarios
             parametros.Add(new System.Data.SqlClient.SqlParameter("Nome", cliente.Nome));
             parametros.Add(new System.Data.SqlClient.SqlParameter("CPF", cliente.CPF));
 
+            bool beneficiarioJaCadastrado = VerificarExistencia(cliente.CPF);
+
+            if (beneficiarioJaCadastrado)
+                return -1;
+
             DataSet ds = base.Consultar("FI_SP_IncBeneficiario", parametros);
             long ret = 0;
 

@@ -53,7 +53,9 @@ namespace WebAtividadeEntrevista.Controllers
                     Telefone = model.Telefone
                 });
 
-           
+                if (model.Id == -1)
+                    return Json("CPF já cadastrado na base");
+
                 return Json("Cadastro efetuado com sucesso");
             }
         }
