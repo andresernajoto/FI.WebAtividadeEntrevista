@@ -153,6 +153,7 @@ namespace FI.AtividadeEntrevista.DAL
                     cli.Nacionalidade = row.Field<string>("Nacionalidade");
                     cli.Nome = row.Field<string>("Nome");
                     cli.Sobrenome = row.Field<string>("Sobrenome");
+                    cli.CPF = row.Field<string>("CPF");
                     cli.Telefone = row.Field<string>("Telefone");
                     lista.Add(cli);
                 }
